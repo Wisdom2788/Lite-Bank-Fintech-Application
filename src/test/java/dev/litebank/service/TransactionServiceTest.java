@@ -1,40 +1,44 @@
 package dev.litebank.service;
 
 
+import dev.litebank.dto.TransactionType;
 import dev.litebank.dto.request.CreateTransactionRequest;
-import dev.litebank.dto.request.TransactionType;
 import dev.litebank.dto.response.CreateTransactionResponse;
 import dev.litebank.dto.response.TransactionResponse;
 import dev.litebank.services.TransactionService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Slf4j
 public class TransactionServiceTest {
+
     @Autowired
     private TransactionService transactionService;
 
     @Test
-    void testCanCreateTransaction(){
+    void testTransactionService(){
         CreateTransactionRequest transactionRequest = new CreateTransactionRequest();
         transactionRequest.setTransactionType(TransactionType.CREDIT);
-        transactionRequest.setAccountNumber("0123456789");
-        transactionRequest.setAmount(new BigDecimal(20_000));
+        transactionRequest.setAmount(new BigDecimal("20000.00"));
+        transactionRequest.setAccountNumber("1234567890");
 
-        CreateTransactionResponse transactionResponse =
-                transactionService.create(transactionRequest);
+        CreateTransactionResponse transactionResponse = transactionService.create(transactionRequest);
         assertNotNull(transactionResponse);
-        TransactionResponse transaction =
-                transactionService.getTransactionBy(transactionResponse.getId());
+        TransactionResponse transaction = transactionService.getTransactionById(transactionResponse.getId());
+        log.info("transaction response--> {}", transaction);
         assertThat(transaction).isNotNull();
-        assertThat(transaction.getAmount())
-                .isEqualTo(transactionRequest.getAmount().toString());
+        assertThat(transaction.getAmount()).isEqualTo(transactionRequest.getAmount().toString());
+
     }
 
 }
