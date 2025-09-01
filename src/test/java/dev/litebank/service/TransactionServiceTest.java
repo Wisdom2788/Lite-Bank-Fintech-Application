@@ -1,19 +1,20 @@
 package dev.litebank.service;
 
 
-import dev.litebank.dto.TransactionType;
+import dev.litebank.models.TransactionType;
 import dev.litebank.dto.request.CreateTransactionRequest;
 import dev.litebank.dto.response.CreateTransactionResponse;
 import dev.litebank.dto.response.TransactionResponse;
+import dev.litebank.services.AccountService;
 import dev.litebank.services.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,8 +26,11 @@ public class TransactionServiceTest {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private AccountService accountService;
+
     @Test
-    void testTransactionService(){
+    void testCreateTransactionService(){
         CreateTransactionRequest transactionRequest = new CreateTransactionRequest();
         transactionRequest.setTransactionType(TransactionType.CREDIT);
         transactionRequest.setAmount(new BigDecimal("20000.00"));
@@ -35,10 +39,28 @@ public class TransactionServiceTest {
         CreateTransactionResponse transactionResponse = transactionService.create(transactionRequest);
         assertNotNull(transactionResponse);
         TransactionResponse transaction = transactionService.getTransactionById(transactionResponse.getId());
-        log.info("transaction response--> {}", transaction);
+
+        log.info("transaction response---> {}", transaction);
         assertThat(transaction).isNotNull();
         assertThat(transaction.getAmount()).isEqualTo(transactionRequest.getAmount().toString());
 
     }
+
+
+    @Test
+    @Sql(scripts = {"/db/data.sql"})
+    void testCanGetTransactionByAccountNumber(){
+        List<TransactionResponse> transactions =
+                transactionService.getTransactionsFor("0123456789");
+        assertThat(transactions).isNotNull();
+        assertThat(transactions.size()).isEqualTo(5);
+    }
+
+//    @Test
+//    void testCanViewAccount(){
+//        ViewAccountResponse response = accountService.viewDetailsFor("0123456789");
+//        assertThat(response).isNotNull();
+//        assertThat();
+//    }
 
 }

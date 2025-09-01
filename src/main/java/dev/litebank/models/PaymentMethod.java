@@ -1,4 +1,4 @@
-package dev.litebank.dto;
+package dev.litebank.models;
 
 public enum PaymentMethod {
     CARD,

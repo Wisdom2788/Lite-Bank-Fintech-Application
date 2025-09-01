@@ -1,4 +1,4 @@
-package dev.litebank.model;
+package dev.litebank.models;
 
 
 import jakarta.persistence.Entity;

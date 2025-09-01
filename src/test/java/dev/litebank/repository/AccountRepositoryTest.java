@@ -1,6 +1,6 @@
 package dev.litebank.repository;
 
-import dev.litebank.model.Account;
+import dev.litebank.models.Account;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
